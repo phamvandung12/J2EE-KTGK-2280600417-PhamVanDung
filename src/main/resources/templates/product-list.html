@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách học phần</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+        
+        .navbar {
+            background-color: #1a1a2e;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar-brand {
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            text-decoration: none;
+            margin-right: 30px;
+        }
+        
+        .navbar-menu {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .navbar-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        .navbar-menu a:hover,
+        .navbar-menu a.active {
+            background-color: #16213e;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 20px;
+        }
+
+        .search-input {
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid #4b5563;
+            background-color: #111827;
+            color: #e5e7eb;
+            font-size: 13px;
+        }
+
+        .search-btn {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: none;
+            background-color: #2563eb;
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .auth-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-size: 14px;
+            background-color: #23324f;
+            padding: 6px;
+            border-radius: 8px;
+        }
+
+        .auth-user {
+            background-color: #1b2740;
+            padding: 7px 12px;
+            border-radius: 4px;
+        }
+
+        .auth-link,
+        .logout-btn {
+            color: white;
+            background-color: #334155;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 13px;
+            font-family: inherit;
+        }
+
+        .auth-link:hover,
+        .logout-btn:hover {
+            background-color: #475569;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .btn-add {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #10b981;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .btn-add:hover {
+            background-color: #059669;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: #1a1a2e;
+            color: white;
+        }
+        
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+        
+        tbody tr:hover {
+            background-color: #f9fafb;
+        }
+        
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .btn-edit {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .btn-edit:hover {
+            background-color: #2563eb;
+        }
+        
+        .btn-delete {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-delete:hover {
+            background-color: #dc2626;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/" class="navbar-brand">Home</a>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="navbar-menu">
+                <a href="/courses" class="active">Courses</a>
+            </div>
+
+            <!-- Thanh tìm kiếm học phần theo tên -->
+            <form th:action="@{/courses}" method="get" class="search-form">
+                <input type="text"
+                       name="keyword"
+                       class="search-input"
+                       placeholder="Tìm theo tên học phần..."
+                       th:value="${keyword}">
+                <button type="submit" class="search-btn">Tìm</button>
+            </form>
+            <div class="auth-area">
+                <span th:if="${authenticated}" class="auth-user">
+                    Xin chao, <strong th:text="${currentUsername}"></strong>
+                </span>
+                <a th:if="${!authenticated}" th:href="@{/login}" class="auth-link">Dang nhap</a>
+                <form th:if="${authenticated}" th:action="@{/logout}" method="post" class="logout-form">
+                    <button type="submit" class="logout-btn">Dang xuat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="header">
+            <h1>Quản lý học phần</h1>
+            <p>Danh sách tất cả học phần trong hệ thống</p>
+        </div>
+        
+        <div style="margin-bottom: 20px;">
+            <a href="/courses/add" class="btn-add" sec:authorize="hasRole('ADMIN')">+ Thêm học phần mới</a>
+        </div>
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Tên học phần</th>
+                        <th>Số tín chỉ</th>
+                        <th>Giảng viên</th>
+                        <th>Hình ảnh</th>
+                        <th>Danh mục</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:if="${#lists.isEmpty(products)}">
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <h3>Chưa có học phần nào</h3>
+                                <p>Nhấn "Thêm học phần mới" để bắt đầu</p>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:each="product, iterStat : ${products}">
+                        <td th:text="${iterStat.count + (currentPage * pageSize)}"></td>
+                        <td>
+                            <div>
+                                <strong th:text="${product.name}"></strong>
+                            </div>
+                            <div style="font-size: 12px; color: #6b7280;" th:text="${product.productCode}"></div>
+                        </td>
+                        <td th:text="${product.price}"></td>
+                        <td th:text="${product.lecturer}"></td>
+                        <td>
+                            <img th:if="${product.imageName != null}" 
+                                 th:src="@{/uploads/{img}(img=${product.imageName})}" 
+                                 alt="Product Image" 
+                                 class="product-image"
+                                 onerror="this.style.display='none'">
+                            <span th:if="${product.imageName == null}" style="color: #9ca3af;">Không có hình</span>
+                        </td>
+                        <td th:text="${product.category.name}"></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a th:href="@{/courses/edit/{id}(id=${product.id})}" class="btn btn-edit" sec:authorize="hasRole('ADMIN')">Sửa</a>
+                                <a th:href="@{/courses/delete/{id}(id=${product.id})}"
+                                   class="btn btn-delete"
+                                   sec:authorize="hasRole('ADMIN')"
+                                   onclick="return confirm('Bạn có chắc muốn xóa học phần này?')">Xóa</a>
+                                <a th:href="@{/enroll/{id}(id=${product.id})}"
+                                   class="btn btn-edit"
+                                   style="background-color:#10b981;"
+                                   sec:authorize="hasRole('STUDENT')">Enroll</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Phân trang -->
+        <div th:if="${totalPages > 1}" style="margin-top: 20px; display: flex; justify-content: center; gap: 8px; align-items: center;">
+                <a th:if="${currentPage > 0}"
+                    th:href="@{/courses(page=${currentPage - 1}, keyword=${keyword})}"
+               class="btn"
+               style="background-color:#e5e7eb;">« Trước</a>
+
+            <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                                         <a th:href="@{/courses(page=${i}, keyword=${keyword})}"
+                   th:text="${i + 1}"
+                   th:class="${i} == ${currentPage} ? 'btn btn-edit' : 'btn'"
+                   style="margin:0 2px;"></a>
+            </span>
+
+                <a th:if="${currentPage < totalPages - 1}"
+                    th:href="@{/courses(page=${currentPage + 1}, keyword=${keyword})}"
+               class="btn"
+               style="background-color:#e5e7eb;">Sau »</a>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 - Phát triển ứng dụng với J2EE</p>
+            <p sec:authorize="hasRole('STUDENT')">
+                <a href="/enroll/my-courses" style="color:#2563eb; text-decoration:none;">Xem My Courses</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký tài khoản sinh viên</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; padding: 40px 20px; }
+        .container { max-width: 420px; margin: 0 auto; }
+        .card { background: white; border-radius: 12px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        h1 { font-size: 22px; margin-bottom: 10px; text-align: center; }
+        .subtitle { text-align: center; color: #6b7280; margin-bottom: 25px; font-size: 13px; }
+        .form-group { margin-bottom: 18px; }
+        label { display: block; margin-bottom: 6px; font-size: 13px; color: #374151; font-weight: 600; }
+        label .required { color: #ef4444; }
+        input[type="text"], input[type="password"], input[type="email"] { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #d1d5db; font-size: 14px; }
+        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+        .error-message { color: #ef4444; font-size: 12px; margin-top: 4px; }
+        .btn-primary { width: 100%; padding: 11px 16px; border-radius: 8px; border: none; background: #2563eb; color: white; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 10px; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .footer { text-align: center; margin-top: 15px; font-size: 13px; color: #6b7280; }
+        .footer a { color: #2563eb; text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <h1>Đăng ký tài khoản sinh viên</h1>
+        <p class="subtitle">Tạo tài khoản để đăng ký học phần</p>
+
+        <form th:action="@{/register}" th:object="${account}" method="post">
+            <div class="form-group">
+                <label for="username">Username <span class="required">*</span></label>
+                <input id="username" type="text" th:field="*{loginName}" placeholder="Nhập username">
+                <div class="error-message" th:if="${#fields.hasErrors('loginName')}" th:errors="*{loginName}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email <span class="required">*</span></label>
+                <input id="email" type="email" th:field="*{email}" placeholder="Nhập email sinh viên">
+                <div class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password <span class="required">*</span></label>
+                <input id="password" type="password" th:field="*{password}" placeholder="Nhập mật khẩu">
+                <div class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+            </div>
+
+            <button type="submit" class="btn-primary">Đăng ký</button>
+        </form>
+
+        <div class="footer">
+            Đã có tài khoản? <a th:href="@{/login}">Đăng nhập</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

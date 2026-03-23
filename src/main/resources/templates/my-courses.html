@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; padding: 20px; }
+        .navbar { background-color: #1a1a2e; padding: 15px 30px; margin-bottom: 30px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .navbar a { color: white; text-decoration: none; margin-right: 15px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
+        thead { background-color: #111827; color: white; }
+        .empty { text-align: center; padding: 30px; color: #6b7280; }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <div>
+        <a href="/courses">Courses</a>
+        <a href="/enroll/my-courses" style="font-weight:bold;">My Courses</a>
+    </div>
+    <div>
+        <span th:if="${authenticated}" style="color:white; margin-right:10px;">Xin chào, <strong th:text="${currentUsername}"></strong></span>
+        <form th:if="${authenticated}" th:action="@{/logout}" method="post" style="display:inline;">
+            <button type="submit">Đăng xuất</button>
+        </form>
+        <a th:if="${!authenticated}" th:href="@{/login}">Đăng nhập</a>
+    </div>
+</div>
+
+<div class="container">
+    <h1>My Courses</h1>
+    <p>Các học phần bạn đã đăng ký</p>
+
+    <div th:if="${#lists.isEmpty(enrollments)}" class="empty">
+        Bạn chưa đăng ký học phần nào.
+    </div>
+
+    <table th:if="${!#lists.isEmpty(enrollments)}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Tên học phần</th>
+            <th>Số tín chỉ</th>
+            <th>Giảng viên</th>
+            <th>Ngày đăng ký</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="enr, iter : ${enrollments}">
+            <td th:text="${iter.count}"></td>
+            <td th:text="${enr.course.name}"></td>
+            <td th:text="${enr.course.price}"></td>
+            <td th:text="${enr.course.lecturer}"></td>
+            <td th:text="${#temporals.format(enr.enrollDate, 'dd/MM/yyyy HH:mm')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
